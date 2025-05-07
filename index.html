@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Match Scores Table</title>
+    <style>
+        table, th, td { border: 1px solid black; border-collapse: collapse; padding: 8px; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2>Match Scores Table</h2>
+
+    <label>Select Columns:</label>
+    <select id="headerSelect" multiple></select>
+    <button onclick="updateTable()">Update Table</button>
+
+    <table id="dataTable">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        let jsonData = [];
+        const fileId = 1URBm4qMQsEERt5SVN3IRpFlD1AVWiroF;  // Replace with your actual file ID
+
+        // Load JSON data from Google Drive
+        fetch(`https://drive.google.com/uc?export=download&id=${fileId}`)
+            .then(response => response.json())
+            .then(data => {
+                jsonData = data;
+                populateHeaders(Object.keys(jsonData[0])); // Populate header selection
+                updateTable(); // Create table with all headers initially
+            })
+            .catch(error => console.error("Error loading JSON:", error));
+
+        // Populate header selection dropdown
+        function populateHeaders(headers) {
+            const select = document.getElementById("headerSelect");
+            headers.forEach(header => {
+                const option = document.createElement("option");
+                option.value = header;
+                option.textContent = header;
+                option.selected = true; // Select all headers by default
+                select.appendChild(option);
+            });
+        }
+
+        // Update table based on selected headers
+        function updateTable() {
+            const selectedHeaders = Array.from(document.getElementById("headerSelect").selectedOptions).map(opt => opt.value);
+            const tableHead = document.getElementById("dataTable").querySelector("thead");
+            const tableBody = document.getElementById("dataTable").querySelector("tbody");
+
+            tableHead.innerHTML = ""; 
+            tableBody.innerHTML = ""; 
+
+            // Create table header
+            const headerRow = document.createElement("tr");
+            selectedHeaders.forEach(header => {
+                const th = document.createElement("th");
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+            tableHead.appendChild(headerRow);
+
+            // Create table rows
+            jsonData.forEach(item => {
+                const row = document.createElement("tr");
+                selectedHeaders.forEach(header => {
+                    const td = document.createElement("td");
+                    td.textContent = item[header] || "-"; // Display "-" if missing
+                    row.appendChild(td);
+                });
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
