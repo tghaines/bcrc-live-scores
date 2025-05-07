@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCRC Live Scores</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>BCRC Live Scores</h1>
+
+    <label for="filename">Enter JSON filename:</label>
+    <input type="text" id="filename" placeholder="TS_scores_May_07.json">
+    <button onclick="fetchScores()">Load Scores</button>
+
+    <table id="scoresTable">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Match</th>
+                <th>Shots</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function fetchScores() {
+            const filename = document.getElementById("filename").value.trim();
+            if (!filename) {
+                alert("Please enter a filename.");
+                return;
+            }
+
+            const url = `https://your-username.github.io/your-repo-name/${filename}`; // Update with actual GitHub repo path
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Failed to fetch data");
+                const jsonData = await response.json();
+
+                const sortedData = jsonData.sort((a, b) => a.user.localeCompare(b.user));
+                const tableBody = document.querySelector("#scoresTable tbody");
+                tableBody.innerHTML = "";
+
+                sortedData.forEach(score => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${score.user}</td>
+                        <td>${score.match}</td>
+                        <td>${score.shots}</td>
+                        <td>${score.total}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Error fetching scores:", error);
+                alert("Failed to load JSON file. Check the filename or file availability.");
+            }
+        }
+    </script>
+</body>
+</html>
