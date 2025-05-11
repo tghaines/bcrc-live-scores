@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025 Saturdays Calendar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 500px;
+            margin: auto;
+        }
+        .month {
+            margin: 20px 0;
+        }
+        .day {
+            padding: 10px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+        a {
+            text-decoration: none;
+            color: blue;
+        }
+        .missing {
+            color: gray;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>2025 Saturdays Calendar</h1>
+    <div id="calendarContainer"></div>
+
+    <script>
+        function generateCalendar(year) {
+            const container = document.getElementById("calendarContainer");
+            const months = ["January", "February", "March", "April", "May", "June", 
+                            "July", "August", "September", "October", "November", "December"];
+
+            for (let month = 0; month < 12; month++) {
+                let monthDiv = document.createElement("div");
+                monthDiv.classList.add("month");
+                monthDiv.innerHTML = `<h2>${months[month]} ${year}</h2>`;
+
+                let calendarGrid = document.createElement("div");
+                calendarGrid.classList.add("calendar");
+
+                let daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    let date = new Date(year, month, day);
+                    if (date.getDay() === 6) { // 6 = Saturday
+                        let dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                        let fileUrl = `${dateStr}.html`; // Points to local files in the same directory
+                        let dayDiv = document.createElement("div");
+                        dayDiv.classList.add("day");
+
+                        let link = document.createElement("a");
+                        link.href = fileUrl;
+                        link.textContent = dateStr;
+
+                        // Check if file exists locally
+                        fetch(fileUrl, { method: "HEAD" })
+                            .then(response => {
+                                if (!response.ok) {
+                                    link.classList.add("missing"); // Apply gray styling if missing
+                                }
+                            })
+                            .catch(() => {
+                                link.classList.add("missing");
+                            });
+
+                        dayDiv.appendChild(link);
+                        calendarGrid.appendChild(dayDiv);
+                    }
+                }
+
+                monthDiv.appendChild(calendarGrid);
+                container.appendChild(monthDiv);
+            }
+        }
+
+        generateCalendar(2025);
+    </script>
+
+</body>
+</html>
