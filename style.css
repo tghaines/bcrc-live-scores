@@ -1,0 +1,36 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 500px;
+    margin: auto;
+}
+
+.month {
+    margin: 20px 0;
+}
+
+.day {
+    padding: 10px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.active {
+    color: blue;
+}
+
+.missing {
+    color: gray;
+    pointer-events: none;
+}
